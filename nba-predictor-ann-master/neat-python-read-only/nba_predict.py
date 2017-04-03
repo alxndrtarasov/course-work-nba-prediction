@@ -32,7 +32,7 @@ def eval_fitness(population):
 		fitness = MAX_FITNESS
 		possible_fitness = 0
 		num_correct = 0
-		for i in range(len(games)-50):
+		for i in range(len(games)):
 			game = games[i]
 			inputs = []
 			home_stats = teams[game.home()].team_stats()
