@@ -54,11 +54,11 @@ class Scraper:
                 team_name = team_name[0 : -1]
                 print team_name + " team"
             my_teams[team_name] = Team([float(team_text[i+14]), 
-                                        float(team_text[i+15])/100.0, 
-                                        float(team_text[i+16])/100.0, 
+                                        float(team_text[i+15])/100.0, #/100.0
+                                        float(team_text[i+16])/100.0, #/100.0
                                         float(team_text[i+17]),
                                         float(team_text[i+18]),
-                                        float(team_text[i+19])/100.0,
-                                        float(team_text[i+20])/100.0,
+                                        float(team_text[i+19])/100.0,#/100.0
+                                        float(team_text[i+20])/100.0,#/100.0
                                         float(team_text[i+21])])
         return my_teams

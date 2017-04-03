@@ -32,7 +32,8 @@ def eval_fitness(population):
 		fitness = MAX_FITNESS
 		possible_fitness = 0
 		num_correct = 0
-		for game in games:
+		for i in range(len(games)-50):
+			game = games[i]
 			inputs = []
 			home_stats = teams[game.home()].team_stats()
 			away_stats = teams[game.away()].team_stats()
@@ -59,7 +60,7 @@ def eval_fitness(population):
 population.Population.evaluate = eval_fitness
 
 pop = population.Population()
-pop.epoch(eval_fitness, 100, report=True, save_best=False)
+pop.epoch(eval_fitness, 300, report=True, save_best=False)
 
 winner = pop.population[0]
 print 'Number of evaluations: %d' %winner.id
@@ -83,4 +84,7 @@ file = open('winner_chromosome', 'w')
 pickle.dump(winner, file)
 file.close()
 
-
+file = open("winner_chromosome")
+chromo = pickle.load(file)
+best_net = nn.create_ffphenotype(chromo)
+file.close()
