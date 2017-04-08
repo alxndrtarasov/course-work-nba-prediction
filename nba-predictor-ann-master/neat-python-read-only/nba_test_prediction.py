@@ -22,7 +22,9 @@ for i in range((len(games)-50)):
 	print j
 	game = games[i]
 	home_team = game.home()
+	print home_team
 	away_team = game.away()
+	print away_team
 	inputs = []
 	home_stats = teams[home_team].team_stats()
 	away_stats = teams[away_team].team_stats()

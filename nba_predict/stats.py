@@ -3,6 +3,8 @@ class Game:
         self.home_name = team1
         self.away_name = team2
         self.diff = score1 - score2
+        self.home_sc=score1
+        self.away_sc=score2
 
     def home(self):
     	return self.home_name
@@ -12,6 +14,14 @@ class Game:
     	
     def result(self):
     	return self.diff
+
+    def home_score(self):
+        return self.home_sc
+
+    def away_score(self):
+        return self.away_sc
+
+
 
 class Team:
     def __init__(self, s):

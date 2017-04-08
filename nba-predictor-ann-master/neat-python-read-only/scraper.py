@@ -1,64 +1,70 @@
-'''
-Script to scrape the contents of Basketball-Reference.com
-Utilizing the BeautifulSoup and URL-Lib libraries
-Author: Quinn McNamara
-'''
-
 import stats
-import urllib2
-
+import csv
 from stats import Game, Team
-from bs4 import BeautifulSoup
-from urllib2 import urlopen
 
 class Scraper:
-    def retrieve_games(self):
-        #returns list of Game instances with data gathered from sub-site of Basketball-Reference
-        website = urlopen("https://web.archive.org/web/20150707144401/http://www.basketball-reference.com/leagues/NBA_2015_games.html").read()
-        soup = BeautifulSoup(website)
-        #uses CSS selectors to retrieve teams and scores of each game cell of table
-        game_list = soup.select("#games tbody tr td")
-        my_text = []
-        #strips selected list of soups of their tags
-        for game in game_list:
-            my_text.append(game.get_text())
-
-        #loads formatted Game instances into a new list to be returned
-        my_games = []
-        for i in range(0, len(my_text), 8):
-            try:
-                my_games.append(Game(my_text[i+4], my_text[i+2], int(my_text[i+5]), int(my_text[i+3])))
-            except ValueError:
-                break
-
+    def get_games(self):
+        with open('games.csv') as csvfile:
+			reader = csv.DictReader(csvfile)
+			my_games=[]
+			for row in reader:
+				try:
+					my_games.append(Game(row['Home/Neutral'], row['Visitor/Neutral'], int(row['PTSH']), int(row['PTSA'])))
+				except ValueError:
+					break
         return my_games
 
-    #returns a dictionary of NBA teams and statistics gathered from sub-site of Basketball-Reference
-    def retrieve_teams(self):
-        website = urlopen("https://web.archive.org/web/20150310065436/http://www.basketball-reference.com/leagues/NBA_2015.html")
-        soup = BeautifulSoup(website)
-        #uses CSS selectors to retrieve stats for each team
-        team_list = soup.select("#misc tbody tr td")
-
-        team_text = []
-
-        #strips selected list of soups of their tags
-        for team in team_list:
-            team_text.append(team.get_text())
-
-        #loads formatted team names and statistics into a Python dictionary to be returned
-        my_teams = dict()
-        for i in range(0, len(team_text), 24):
-            team_name = team_text[i+1]
-            if team_name[len(team_name) - 1] == "*":
-                team_name = team_name[0 : -1]
-                print team_name + " team"
-            my_teams[team_name] = Team([float(team_text[i+14]), 
-                                        float(team_text[i+15])/100.0, #/100.0
-                                        float(team_text[i+16])/100.0, #/100.0
-                                        float(team_text[i+17]),
-                                        float(team_text[i+18]),
-                                        float(team_text[i+19])/100.0,#/100.0
-                                        float(team_text[i+20])/100.0,#/100.0
-                                        float(team_text[i+21])])
-        return my_teams
+    def get_teams_shape(self, num_of_game):
+        with open('games.csv') as csvfile:
+			result = [0,0,0,0,0,0,0,0,0,0]
+			reader = csv.DictReader(csvfile)
+			i=1
+			for row in reader:
+				print 'i=',i
+				if i == num_of_game:
+					home_team = row['Home/Neutral']
+					away_team = row['Visitor/Neutral']
+					c=0
+					j=1
+					for jrow in reader:
+						print 'j1=',j
+						if(j==(i-1)):
+							if jrow['Home/Neutral']==home_team:
+								c=c+1
+								result[c]=int(jrow['PTSH'])-int(jrow['PTSA'])
+								i=i-1
+							if jrow['Visitor/Neutral']==home_team:
+								c=c+1
+								result[c]=int(jrow['PTSA'])-int(jrow['PTSH'])
+								i=i-1
+							if c==5:
+								print 'gonna break j1'
+								break
+							else:
+								continue
+						j=j+1
+					j=1
+					i=num_of_game
+					for krow in reader:
+						print 'j2=',j
+						if(j==(i-1)):
+							if krow['Home/Neutral']==home_team:
+								c=c+1
+								result[c]=int(krow['PTSH'])-int(krow['PTSA'])
+								i=i-1
+							if jrow['Visitor/Neutral']==home_team:
+								c=c+1
+								result[c]=int(krow['PTSA'])-int(krow['PTSH'])
+								i=i-1
+							if c==10:
+								print 'gonna break j2'
+								break
+							else:
+								continue
+						j=j+1
+					print 'gonna break all'
+					break
+				else:
+					i=i+1
+					continue
+			return result
