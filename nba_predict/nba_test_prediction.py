@@ -3,7 +3,7 @@ import cPickle as pickle
 import math
 
 from scraper import Scraper
-
+from neat import visualize
 from neat.nn import nn_pure as nn
 
 stats_scraper = Scraper()
@@ -13,19 +13,25 @@ file = open("winner_chromosome")
 chromo = pickle.load(file)
 best_net = nn.create_ffphenotype(chromo)
 file.close()
+visualize.draw_net(chromo)
+print '\nBest network output:'
+brain = nn.create_ffphenotype(chromo)
+print brain.neurons
+print brain.synapses
 
 file = open("shapes")
 shapes = pickle.load(file)
 file.close()
 
 j = 0
-s = 0
+s = float(0)
 tp = float(0)
 fp = float(0)
 fn = float(0)
-hw = 0
-rhw = 0
-for i in range(100, len(games)):
+hw = float(0)
+rhw = float(0)
+pred_start = 100
+for i in range(pred_start, len(games)):
     j = j + 1
     print j
     game = games[i]
@@ -57,10 +63,8 @@ for i in range(100, len(games)):
             fn = fn + 1
             rhw=rhw+1
             print "FAIL"
-    print 'single error = ', str(math.fabs(game.result() / float(100) - mov))
-    total_err = total_err + math.fabs(game.result() - mov)
-print "median error = ", total_err / len(games)
-print "successful predicted:" + str(s) + " out of " + str(len(games) - 100)
+spred = float(s/(len(games) - pred_start))
+print "successful predicted:", spred
 print tp,fp,fn
 P=float(tp/(tp+fp))
 R=float(tp/(tp+fn))
@@ -68,5 +72,5 @@ F=2*P*R/(P+R)
 print 'precision = ',P
 print 'recall = ',R
 print 'F-measure = ', F
-print 'Home win predicted ',hw
-print 'Real home wins ', rhw
+print 'Home win predicted ',float(hw/(len(games) - pred_start))
+print 'Real home wins ', float(rhw/(len(games) - pred_start))

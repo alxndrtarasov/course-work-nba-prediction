@@ -1,10 +1,14 @@
 class Game:
-    def __init__(self, team1, team2, score1, score2):
+    def __init__(self, team1, team2, score1, score2, when):
         self.home_name = team1
         self.away_name = team2
         self.diff = score1 - score2
         self.home_sc=score1
         self.away_sc=score2
+        self.date = when
+
+    def g_date(self):
+        return self.date
 
     def home(self):
     	return self.home_name
